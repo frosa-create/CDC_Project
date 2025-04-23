@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s]: %(message)s:')
 
 
-project_name = 'ccnClassifier'
+project_name = 'cnnClassifier'
 list_of_files = [
     '.github/workflows/.getkeep',
     f'src/{project_name}/__init__.py',
@@ -22,6 +22,7 @@ list_of_files = [
     'requirements.txt',
     'setup.py',
     'research/trials.ipynb',
+    'templates/index.html',
 
     
 

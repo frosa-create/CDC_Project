@@ -2,7 +2,7 @@ import os
 import shutil
 
 raw_dir = '/artifacts/data_ingestion/data/Chicken_Fecal_Images'
-sorted_dir = '/artifacts/data_ingestion/data'
+sorted_dir = '/artifacts/data_ingestion/data/Chicken_Fecal_Images_Sorted'
 
 valid_labels = ['salmo', 'cocci', 'healthy']
 

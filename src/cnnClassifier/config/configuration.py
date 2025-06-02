@@ -1,10 +1,13 @@
 import os
+from pathlib import Path
 from cnnClassifier.constants import *
 from cnnClassifier.utils.common import read_yaml, create_directories
 from cnnClassifier.entity.config_entity import (DataIngestionConfig,
+                                                DataValidationConfig,
                                                 PrepareBaseModelConfig,
                                                 PrepareCallbacksConfig,
-                                                TrainingConfig,)
+                                                TrainingConfig,
+                                                EvaluationConfig,)
 
 
 
@@ -34,6 +37,24 @@ class ConfigurationManager:
         )
         
         return data_ingestion_config
+
+    def get_data_validation_config(self) -> DataValidationConfig:
+        config = self.config.data_validation
+
+        create_directories([config.root_dir])
+
+        data_validation_config = DataValidationConfig(
+            root_dir=config.root_dir,
+            STATUS_FILE=config.STATUS_FILE,
+            raw_data_dir=config.raw_data_dir,
+            sorted_data_dir=config.sorted_data_dir,
+            valid_labels=config.valid_labels,
+            valid_extensions=config.valid_extensions,
+            min_files_per_class=config.min_files_per_class,
+            max_file_size_mb=config.max_file_size_mb
+        )
+
+        return data_validation_config
 
     def get_prepare_base_model_config(self) -> PrepareBaseModelConfig:
         config = self.config.prepare_base_model
@@ -90,3 +111,13 @@ class ConfigurationManager:
         )
 
         return training_config
+
+    def get_validation_config(self) -> EvaluationConfig:
+        eval_config = EvaluationConfig(
+            path_of_model=Path("artifacts/training/model.h5"),
+            training_data=Path("artifacts/data_ingestion/data/Chicken_Fecal_Images_Sorted"),
+            all_params=self.params,
+            params_image_size=self.params.IMAGE_SIZE,
+            params_batch_size=self.params.BATCH_SIZE,
+        )
+        return eval_config

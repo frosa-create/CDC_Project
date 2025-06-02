@@ -3,6 +3,8 @@ from cnnClassifier.pipeline.stage_01_data_ingestion import DataIngestionTraining
 from cnnClassifier.pipeline.stage_02_prepare_base_model import PrepareBaseModelTrainingPipeline
 from cnnClassifier.validation.stage_01_validate_and_sort import sort_chicken_fecal_images
 from cnnClassifier.pipeline.stage_03_training import ModelTrainingPipeline
+from cnnClassifier.pipeline.stage_04_evaluation import EvaluationPipeline
+
 STAGE_NAME = "Data Ingestion Stage"
 try:
     logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
@@ -13,6 +15,7 @@ except Exception as e:
         logger.exception(e)
         raise e
 
+STAGE_NAME = "Data Validation Stage"
 raw_dir = '/Users/ryanrosa/Downloads/AI_DS_Project_Repos/CDC_Project/artifacts/data_ingestion/data/Chicken_Fecal_Images'
 sorted_dir = '/Users/ryanrosa/Downloads/AI_DS_Project_Repos/CDC_Project/artifacts/data_ingestion/data/Chicken_Fecal_Images_Sorted'
 valid_labels = ['salmo', 'cocci', 'healthy']
@@ -47,6 +50,17 @@ try:
     model_trainer = ModelTrainingPipeline()
     model_trainer.main()
     logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<\n\nx==========x")
+except Exception as e:
+    logger.exception(e)
+    raise e
+
+STAGE_NAME = "Evaluation Stage"
+try:
+    logger.info(f"****************")
+    logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+    obj = EvaluationPipeline()
+    obj.main()
+    logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==============x")
 except Exception as e:
     logger.exception(e)
     raise e

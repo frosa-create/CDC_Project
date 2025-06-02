@@ -1,8 +1,9 @@
 import os
 import shutil
+import re
 
-raw_dir = '/artifacts/data_ingestion/data/Chicken_Fecal_Images'
-sorted_dir = '/artifacts/data_ingestion/data/Chicken_Fecal_Images_Sorted'
+raw_dir = 'artifacts/data_ingestion/data/Chicken_Fecal_Images'
+sorted_dir = 'artifacts/data_ingestion/data/Chicken_Fecal_Images_Sorted'
 
 valid_labels = ['salmo', 'cocci', 'healthy']
 
@@ -20,7 +21,10 @@ def sort_chicken_fecal_images(raw_dir, sorted_dir, valid_labels):
             continue
 
         filepath = os.path.join(raw_dir, filename)
-        label = filename.split('_')[0].lower()
+        #label = filename.split('_')[0].lower()
+        match = re.match(r'^([a-zA-Z]+)[._-]', filename)
+        label = match.group(1).lower() if match else ''
+
 
         if label not in valid_labels:
             print(f"Unrecognized label: {label} from filename: {filename}")
@@ -37,3 +41,14 @@ def sort_chicken_fecal_images(raw_dir, sorted_dir, valid_labels):
         print(f"⚠️ Skipped {len(missing_labels)} image(s) with unknown labels:")
         for f in missing_labels:
             print(f"  - {f}")
+
+
+if __name__ == "__main__":
+    print(f"Starting image sorting...")
+    print(f"Raw directory: {raw_dir}")
+    print(f"Sorted directory: {sorted_dir}")
+    print(f"Raw directory exists: {os.path.exists(raw_dir)}")
+    if os.path.exists(raw_dir):
+        print(f"Files in raw directory: {len(os.listdir(raw_dir))}")
+
+    sort_chicken_fecal_images(raw_dir, sorted_dir, valid_labels)

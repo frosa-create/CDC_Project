@@ -1,158 +1,102 @@
-# CDC_Project
+# Chicken Disease Classification
 
+An end-to-end deep learning project that classifies chicken diseases from fecal image samples, built as a full MLOps pipeline — from data versioning through model training to cloud deployment.
 
-## Workflows
+**Author:** Francisco Rosa
+**Repo:** [CDC_Project](https://github.com/frosa-create/CDC_Project)
 
-1. Update config.yaml
-2. Update secrets.yaml [optional]
-3. Update params.yaml
-4. Update the entity
-5. Update the configuration manager in src config
-6. update the components
-7. update the pipeline
-8. update the main.py file
-9. update the dvc.yaml file
+## Overview
 
+This project trains an image classification model to distinguish between three classes; **Coccidiosis**, **Salmonella**, and **Healthy** from photographs of chicken fecal samples, helping enable faster, earlier diagnosis than manual inspection allows. Beyond the model itself, the project implements a reproducible ML pipeline with data version control, containerized deployment, and CI/CD to both AWS and Azure.
 
-# How to run?
-### STEPS:
+**Current model performance:**
+- Accuracy: **86.7%**
+- Loss: **0.448**
 
-Clone the repository
+*(from `scores.json`, update this section as you retrain/improve the model)*
 
-```bash
-https://github.com/entbappy/Chicken-Disease-Classification--Project
+## Tech Stack
+
+- **Language:** Python
+- **ML:** TensorFlow/Keras, VGG16 transfer learning 
+- **Pipeline & versioning:** DVC (Data Version Control)
+- **Deployment:** Docker, AWS (EC2 + ECR), Azure Container Registry
+- **CI/CD:** GitHub Actions
+- **Web app:** Flask (`app.py`)
+
+## Project Structure
+
 ```
-### STEP 01- Create a conda environment after opening the repository
-
-```bash
-conda create -n cnncls python=3.8 -y
+├── .dvc/              # DVC configuration for data/pipeline versioning
+├── .github/workflows/ # CI/CD pipeline definitions
+├── artifacts/         # Model artifacts and outputs
+├── config/            # Configuration files
+├── research/          # Exploratory notebooks and experimentation
+├── src/                # Core source code (data pipeline, training, inference)
+├── templates/          # Web app templates
+├── app.py              # Flask application entry point
+├── main.py             # Pipeline orchestration
+├── params.yaml          # Model/training parameters
+├── dvc.yaml / dvc.lock   # DVC pipeline definition
+└── scores.json           # Latest model evaluation metrics
 ```
 
+## How to Run
+
+### 1. Clone the repository
 ```bash
-conda activate cnncls
+git clone https://github.com/frosa-create/CDC_Project.git
+cd CDC_Project
 ```
 
+### 2. Create and activate a virtual environment
+```bash
+conda create -n cdc python=3.8 -y
+conda activate cdc
+```
 
-### STEP 02- install the requirements
+### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-
+### 4. Run the app
 ```bash
-# Finally run the following command
 python app.py
 ```
+Then open the local host/port shown in the terminal.
 
-Now,
+### DVC pipeline commands
 ```bash
-open up you local host and port
+dvc init
+dvc repro
+dvc dag
 ```
 
+## Deployment
 
-### DVC cmd
+The app is containerized with Docker and deployed via GitHub Actions CI/CD to:
 
-1. dvc init
-2. dvc repro
-3. dvc dag
+- **AWS:** Docker image built, pushed to ECR, and run on an EC2 instance
+- **Azure:** Docker image pushed to Azure Container Registry and run via Azure Web App
 
+See `.github/workflows/` for the full CI/CD pipeline definitions.
 
+## Results & Insights
 
-# AWS-CICD-Deployment-with-Github-Actions
+- The dataset totals just over 200 images across three classes: **Coccidiosis**, **Healthy**, and **Salmonella** — with Coccidiosis and Healthy making up the bulk of the data and Salmonella represented by a notably smaller sample
+- Given the class imbalance, the model likely performs strongest on Coccidiosis/Healthy and weakest on Salmonella — worth confirming with a per-class breakdown (confusion matrix) rather than relying on the overall 86.7% accuracy alone
+- Model performed strongest on Coccidiosis class, which is represented by the largest sample size of images, followed by Healthy images
 
-## 1. Login to AWS console.
+## Future Enhancements
 
-## 2. Create IAM user for deployment
+- [ ] Collect more Salmonella samples to reduce class imbalance, or apply class weighting / oversampling during training
+- [ ] Improve/train model to more accurately depict images of diseases outside the three that it has been trained and tested on
 
-	#with specific access
+## Future Enhancements
 
-	1. EC2 access : It is virtual machine
+- [ ] 
 
-	2. ECR: Elastic Container registry to save your docker image in aws
+## License
 
-
-	#Description: About the deployment
-
-	1. Build docker image of the source code
-
-	2. Push your docker image to ECR
-
-	3. Launch Your EC2 
-
-	4. Pull Your image from ECR in EC2
-
-	5. Lauch your docker image in EC2
-
-	#Policy:
-
-	1. AmazonEC2ContainerRegistryFullAccess
-
-	2. AmazonEC2FullAccess
-
-	
-## 3. Create ECR repo to store/save docker image
-    - Save the URI: 065145552776.dkr.ecr.us-east-2.amazonaws.com/chicken_disease
-
-	
-## 4. Create EC2 machine (Ubuntu) 
-
-## 5. Open EC2 and Install docker in EC2 Machine:
-	
-	
-	#optinal
-
-	sudo apt-get update -y
-
-	sudo apt-get upgrade
-	
-	#required
-
-	curl -fsSL https://get.docker.com -o get-docker.sh
-
-	sudo sh get-docker.sh
-
-	sudo usermod -aG docker ubuntu
-
-	newgrp docker
-	
-# 6. Configure EC2 as self-hosted runner:
-    setting>actions>runner>new self hosted runner> choose os> then run command one by one
-
-
-# 7. Setup github secrets:
-
-    AWS_ACCESS_KEY_ID=
-
-    AWS_SECRET_ACCESS_KEY=
-
-    AWS_REGION = us-east-1
-
-    AWS_ECR_LOGIN_URI = demo>>  566373416292.dkr.ecr.ap-south-1.amazonaws.com
-
-    ECR_REPOSITORY_NAME = simple-app
-
-
-
-
-# AZURE-CICD-Deployment-with-Github-Actions
-
-## Save pass:
-
-AZURE_REGISTRY_KEY=<your-azure-registry-key>
-
-
-## Run from terminal:
-
-docker build -t chickenapp.azurecr.io/chicken:latest .
-
-docker login chickenapp.azurecr.io
-
-docker push chickenapp.azurecr.io/chicken:latest
-
-
-## Deployment Steps:
-
-1. Build the Docker image of the Source Code
-2. Push the Docker image to Container Registry
-3. Launch the Web App Server in Azure 
-4. Pull the Docker image from the container registry to Web App server and run 
+MIT
